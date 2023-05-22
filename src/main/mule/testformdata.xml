@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="410f7b23-67cb-4a8f-9e3e-e9b01c6a66f2" >
+		<http:listener-connection host="0.0.0.0" port="8081" protocol="HTTPS"/>
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="c5959f0c-9927-4f98-85f2-b4b9c1efd2ca" >
+		<http:request-connection protocol="HTTPS" host="www.swavlambancard.gov.in" />
+	</http:request-config>
+	<flow name="testformdataFlow" doc:id="9112f6cc-41cb-473d-af0a-b70a90a91da1" >
+		<http:listener doc:name="Listener" doc:id="cc13addc-1b6f-437e-9c0b-96779d91924f" config-ref="HTTP_Listener_config" path="/test"/>
+		<ee:transform doc:name="Transform Message" doc:id="73c694b3-8cc2-4646-b007-5e4099f314d7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/x-www-form-urlencoded
+---
+{
+	"udidno": "KA1210619700040954"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request" doc:id="40eb5525-fcfc-4fa5-8227-b07aa63b3551" config-ref="HTTP_Request_configuration" path="/admin/account/apiUDIDdetail" outputMimeType="application/x-www-form-urlencoded"/>
+	</flow>
+</mule>
